@@ -1,5 +1,7 @@
 # Projet7
 
+Nyv, sur ce lien, t'as la solution sur le preprocessing, feature engineering et meme le modelling **https://github.com/rishabhrao1997/Home-Credit-Default-Risk**, il est inspiré de la première solution kaggle. Dis moi ce que t'en penses.
+
 Vous êtes Data Scientist au sein d'une société financière, nommée "Prêt à dépenser", qui propose des crédits à la consommation pour des personnes ayant peu ou pas du tout d'historique de prêt.
 
 L’entreprise souhaite mettre en œuvre un outil de “scoring crédit” pour calculer la probabilité qu’un client rembourse son crédit, puis classifie la demande en crédit accordé ou refusé. Elle souhaite donc développer un algorithme de classification en s’appuyant sur des sources de données variées (données comportementales, données provenant d'autres institutions financières, etc.).
