@@ -1,0 +1,5 @@
+translate = {
+"start" : {"english" : "start", "french" : "debut"},
+"of" : {"english" : "of", "french" : "du"},
+"dashboard" : {"english" : "dashboard", "french" : "tableau de bord"}
+}
