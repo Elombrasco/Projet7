@@ -3,3 +3,5 @@ translate = {
 "of" : {"english" : "of", "french" : "du"},
 "dashboard" : {"english" : "dashboard", "french" : "tableau de bord"}
 }
+
+#Don't mind, this was only used to allow folder creation because it could not be left empty on creation.
