@@ -22,13 +22,13 @@ def main() :
 
     @st.cache
     def load_data():
-        z = ZipFile("C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/default_risk.zip")
+        z = ZipFile("default_risk.zip")
         data = pd.read_csv(z.open('default_risk.csv'), index_col='SK_ID_CURR', encoding='utf-8')
 
-        z = ZipFile("C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/X_sample.zip")
+        z = ZipFile("X_sample.zip")
         sample = pd.read_csv(z.open('X_sample.csv'), index_col='SK_ID_CURR', encoding='utf-8')
 
-        description = pd.read_csv("C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/features_description.csv",
+        description = pd.read_csv("features_description.csv",
                               usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
 
         target = data.iloc[:, -1:]
@@ -38,7 +38,7 @@ def main() :
 
     def load_model():
         '''loading the trained model'''
-        pickle_in = open('C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/p7_00_models/LGBMClassifier.pkl', 'rb')
+        pickle_in = open('LGBMClassifier.pkl', 'rb')
         clf = pickle.load(pickle_in)
         return clf
 
