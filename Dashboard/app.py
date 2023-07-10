@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[4]:
-
-
 from dash import Dash, html, dcc, Input, Output
 import pandas as pd
 import pickle
@@ -32,11 +26,26 @@ def load_model():
     clf = pickle.load(pickle_in)
     return clf
 
+def identite_client(data, id):
+    data_client = data[data.index == int(id)]
+    return data_client
+
+def load_prediction(sample, id, clf):
+    X = sample.iloc[:, :-1]
+    score = clf.predict_proba(X[X.index == int(id)])[:, 1]
+    return score
+
+def update_similar_customers_helper(value, sample, knn):     #To be revised
+    similar_customers = load_kmeans(sample, value, knn)
+    return similar_customers
+    
+#Load Data
 data, sample, target, description = load_data()
 id_client = sample.index.values
 clf = load_model()
 
 
+#Design the Dashboard
 app.layout = html.Div(children=[
     html.H1(children='Dashboard Scoring Credit',
             style={'backgroundColor': 'tomato', 'padding': '10px', 'borderRadius': '10px', 'color': 'white',
@@ -72,7 +81,7 @@ app.layout = html.Div(children=[
     ], style={'width': '75%', 'float': 'left', 'padding': '20px'})
 ])
 
-
+#Add interactivity
 @app.callback(
     [Output('customer-id', 'children'),
      Output('customer-info', 'children'),
@@ -141,21 +150,7 @@ def update_customer_info(value):
 
     return "", [], [], px.Figure(), []
 
-
-def identite_client(data, id):
-    data_client = data[data.index == int(id)]
-    return data_client
-
-
-def load_prediction(sample, id, clf):
-    X = sample.iloc[:, :-1]
-    score = clf.predict_proba(X[X.index == int(id)])[:, 1]
-    return score
-
-def update_similar_customers_helper(value, sample, knn):
-    similar_customers = load_kmeans(sample, value, knn)
-    return similar_customers
-
+#All functions that were here were not used and could not be used from here, I moved them to the top
 
 if __name__ == '__main__':
     app.run_server(debug=True)
