@@ -4,27 +4,21 @@
 # In[4]:
 
 
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import Dash, html, dcc, Input, Output
 import pandas as pd
 import pickle
-import shap
-import plotly.graph_objects as go
-import plotly.io as pio
-from sklearn.neighbors import KNeighborsClassifier
+from lightgbm import LGBMClassifier
 from zipfile import ZipFile
+import plotly.express as px
 
-app = dash.Dash(__name__)
+app = Dash(__name__)
 
 def load_data():
-    z = ZipFile("C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/default_risk.zip")
-    data = pd.read_csv(z.open('default_risk.csv'), index_col='SK_ID_CURR', encoding='utf-8')
+    data = pd.read_csv(z.open('X_data.csv'), index_col='SK_ID_CURR', encoding='utf-8')
 
-    z = ZipFile("C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/X_sample.zip")
-    sample = pd.read_csv(z.open('X_sample.csv'), index_col='SK_ID_CURR', encoding='utf-8')
+    sample = pd.read_csv('data/X_sample.csv', index_col='SK_ID_CURR', encoding='utf-8')
 
-    description = pd.read_csv("C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/features_description.csv",
+    description = pd.read_csv("data/features_description.csv",
                               usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
 
     target = data.iloc[:, -1:]
@@ -34,22 +28,13 @@ def load_data():
 
 def load_model():
     '''loading the trained model'''
-    pickle_in = open('C:/Users/Raider/OneDrive/Bureau/openclassrooms/projet7/p7_00_data/p7_00_models/LGBMClassifier.pkl', 'rb')
+    pickle_in = open('data/LGBMClassifier.pkl', 'rb')
     clf = pickle.load(pickle_in)
     return clf
-
-
-def load_knn(sample):
-    # Define and train the k-NN model
-    knn = KNeighborsClassifier(n_neighbors=5)
-    knn.fit(sample.iloc[:, :-1], sample.iloc[:, -1])
-    return knn
-
 
 data, sample, target, description = load_data()
 id_client = sample.index.values
 clf = load_model()
-knn = load_knn(sample)
 
 
 app.layout = html.Div(children=[
@@ -89,12 +74,12 @@ app.layout = html.Div(children=[
 
 
 @app.callback(
-    [dash.dependencies.Output('customer-id', 'children'),
-     dash.dependencies.Output('customer-info', 'children'),
-     dash.dependencies.Output('customer-analysis', 'children'),
-     dash.dependencies.Output('feature-importance', 'figure'),
-     dash.dependencies.Output('similar-customers', 'children')],
-    [dash.dependencies.Input('client-id', 'value')]
+    [Output('customer-id', 'children'),
+     Output('customer-info', 'children'),
+     Output('customer-analysis', 'children'),
+     Output('feature-importance', 'figure'),
+     Output('similar-customers', 'children')],
+    [Input('client-id', 'value')]
 )
 def update_customer_info(value):
     if value:
@@ -138,10 +123,10 @@ def update_customer_info(value):
             if fig is not None:
                 fig.update_layout(margin=dict(l=20, r=20, t=50, b=20), height=500)
             else:
-                fig = go.Figure()
+                fig = px.Figure()
 
         else:
-            fig = go.Figure()
+            fig = px.Figure()
 
         # Similar Customers
         similar_customers = update_similar_customers_helper(value, sample, knn)
@@ -154,7 +139,7 @@ def update_customer_info(value):
 
         return customer_id, customer_info, customer_analysis, fig, similar_customers_output
 
-    return "", [], [], go.Figure(), []
+    return "", [], [], px.Figure(), []
 
 
 def identite_client(data, id):
