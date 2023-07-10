@@ -8,13 +8,10 @@ import plotly.express as px
 app = Dash(__name__)
 
 def load_data():
-    data = pd.read_csv(z.open('X_data.csv'), index_col='SK_ID_CURR', encoding='utf-8')
-
+    #data = pd.read_csv("data/X_data.csv", index_col='SK_ID_CURR', encoding='utf-8')
     sample = pd.read_csv('data/X_sample.csv', index_col='SK_ID_CURR', encoding='utf-8')
-
     description = pd.read_csv("data/features_description.csv",
                               usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
-
     target = data.iloc[:, -1:]
 
     return data, sample, target, description
