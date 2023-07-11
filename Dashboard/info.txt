@@ -1,1 +1,0 @@
-df.loc[customer_id, "CODE_GENDER_M"] == 1
