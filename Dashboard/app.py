@@ -43,7 +43,7 @@ top_right_display = html.Div(
         dcc.Dropdown(
             id="customers_ids_dropdown",
             options=[
-                {'label': i, 'value': i} for i in df.index],
+                {'label': i, 'value': i} for i in sorted(df.index)],
             value = df.index[0]),   #Default value
         html.H2("Selected Customer Score"),
         html.H2(id="predicted_score"),
