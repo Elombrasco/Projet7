@@ -12,22 +12,24 @@ df = pd.read_csv('data/X_sample.csv', index_col="SK_ID_CURR", encoding="utf-8")
 #description_df = pd.read_csv("data/features_description.csv", usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
 model = pickle.load(open("data/LGBMClassifier.pkl", "rb"))
 
+
 def predict_selected_customer_score(selected_customer_id):
     customer_df = df[df.index == selected_customer_id]
     X = customer_df.iloc[:, :-1]
     score = model.predict_proba(X[X.index == selected_customer_id])[0 , 1]
     return score*100
 
+def important_features():
+    features_and_importance = [1, 2, 3, 4] #Placeholder, to be modified
+    return features_and_importance
+
 def predict_similar_customers_score():     #To be revised
+    #One idea is to allow the selection of features and compare the score of the selected customer with the score of
+    #all other customer with the same value for the selected feature or features
     return None
 
-def get_customer_info():
-    gender = df["CODE_GENDER"]
-    age = df["DAYS_BIRTH"] #Decimal problem to be resolved
-    family_status = df["NAME_FAMILY_STATUS"]
-    number_of_children = df["CNT_CHILDREN"]
-
 customers_ids = [{'label': i, 'value': i} for i in sorted(df.index)]
+features = [{'label': i, 'value': i} for i in important_features()]
 
 #Design the Dashboard
 #After creating the app.layout below, we come back here to design each element of the layout
@@ -39,62 +41,84 @@ dashboard_title = html.H1(
 
 #Customer selection
 customer_selection = dbc.Card(
+    [
+    dbc.CardHeader("Customer Selection"),
     dbc.CardBody(
     [
-        html.H2("Customer Selection"),
         dcc.Dropdown(
             id="customers_ids_dropdown",
             options = customers_ids,
             value = customers_ids[0]["value"]),   #Default value
-    ],
-    className = "")
-    )
+    ]),
+    ])
 
 #Customer Score
 customer_score = dbc.Card(
+    [
+    dbc.CardHeader("Customer Score"),
     dbc.CardBody(
         [
-            html.H2("Credit Score"),
             dbc.Progress(id="predicted_score", style = {"height" : "30px"})
         ],
         className = ""
         )
-    )
+    ])
 
 #Customer Information
 customer_information = dbc.Card(
-    dbc.CardBody( "To be completed")
+    dbc.CardBody(
+        [
+        html.H3("Customer Information"),
+        html.Hr(),
+        html.H5([html.Span("Age: "), html.Span(id="age_value")]),
+        html.H5([html.Span("Marital Status: "), html.Span(id="marital_status_value")]),
+        html.H5([html.Span("Gender: "), html.Span(id="gender_value")]),
+        html.H5([html.Span("Profession: "), html.Span(id="profession_value")]),
+        html.H5([html.Span("Income: "), html.Span(id="income_value")])
+        ]
+        )
     )
 
+#Score Interpretation
 customer_figures = dbc.Card(
-    dbc.CardBody( "To be completed")
+    dbc.CardBody(
+        [
+        html.H3("Score Description"),
+        html.Hr(),
+        html.H5("Loand Amount: "),
+        html.H5("Status: ")
+        ]
+        )
     )
+
+features_selection = dbc.Card(
+    [
+    dbc.CardHeader("Features Selection"),
+    dbc.CardBody(
+    [
+        dcc.Dropdown(
+            id="features_dropdown",
+            options = features,
+            value = features[0]["value"]),   #Default value
+    ])
+    ])
 
 all_customers = dbc.Card(
-    dbc.CardBody( "To be completed")
+    dbc.CardBody(
+        [
+        html.H3("Comparison with All Customers"),
+        ]
+        )
     )
 
 some_customers = dbc.Card(
-    dbc.CardBody( "To be completed")
+    dbc.CardBody(
+        [
+        html.H3("Comparison with Selected customers"),
+        ]
+        )
     )
-"""
-#From previprevious work, to be revised
-main_content = html.Div(
-    [
-        html.H2(id='customer-id'),
-        html.Div(id='customer-info'),
 
-        html.H3(children='Customer file analysis'),
-        html.Div(id='customer-analysis'),
-
-        html.H3(children='Feature importance / description'),
-        dcc.Graph(id='feature-importance'),
-
-        html.H3(children='Similar customer files display'),
-        html.Div(id='similar-customers'),
-    ],
-    style={'width': '75%', 'float': 'left', 'padding': '20px'})
-"""
 #This is the app Layout
 app.layout = dbc.Container(     #Same as html.Div but with additional customization
     [
@@ -112,6 +136,8 @@ app.layout = dbc.Container(     #Same as html.Div but with additional customizat
                 dbc.Col(customer_figures)
                 ]
             ),
+        html.Br(),
+        features_selection,
         html.Br(),
         dbc.Row(
             [
