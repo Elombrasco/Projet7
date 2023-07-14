@@ -34,7 +34,7 @@ customers_ids = [{'label': i, 'value': i} for i in sorted(df.index)]
 #Title
 dashboard_title = html.H1(
     'Dashboard Scoring Credit',
-    style={'backgroundColor': 'indigo', 'padding': '10px', 'borderRadius': '10px', 'color': 'white', 'textAlign': 'center'}
+    style={'backgroundColor': "#5F9EA0", 'padding': '10px', 'borderRadius': '10px', 'color': 'white', 'textAlign': 'center'}
     )
 
 #Customer selection
