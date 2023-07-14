@@ -9,22 +9,16 @@ app = Dash(__name__, external_stylesheets = [dbc.themes.BOOTSTRAP])
 
 #Load the data and model
 df = pd.read_csv('data/X_sample.csv', index_col="SK_ID_CURR", encoding="utf-8")
-target_column = df.TARGET
-
 #description_df = pd.read_csv("data/features_description.csv", usecols=['Row', 'Description'], index_col=0, encoding='unicode_escape')
-
 model = pickle.load(open("data/LGBMClassifier.pkl", "rb"))
-
 
 def predict_selected_customer_score(selected_customer_id):
     customer_df = df[df.index == selected_customer_id]
-    X = customer_df.iloc[:, :-1]                                    ##Clarify, this would mean we don't predictions, we should simply take the y value
+    X = customer_df.iloc[:, :-1]
     score = model.predict_proba(X[X.index == selected_customer_id])[0 , 1]
     return score*100
 
 def predict_similar_customers_score():     #To be revised
-    #One idea is to allow the selection of features and compare the score of the selected customer with the score of
-    #all other customer with the same value for the selected feature or features
     return None
 
 def get_customer_info():
