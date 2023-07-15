@@ -20,7 +20,7 @@ def predict_selected_customer_score(selected_customer_id):
     return score*100
 
 #Select features that will be used for comparison
-treshold = 200 #Choose a value for minimum feature importance
+treshold = 210 #Choose a value for minimum feature importance
 features = [{'label': i, 'value': i} for i, j in zip(feature_importances["name"], 
     feature_importances["importance"]) if j > treshold]
 
@@ -32,6 +32,13 @@ def similar_customers_df(reference_customer_id): #To be revised
     mask = df[selected_features].apply(lambda row: any(row == reference_customer_df.values[0]), axis=1)
     similar_customers = df[mask]
     return similar_customers
+
+def recalculate_age(age_value): #Manually coded variables, bad!!!!!!!!!!!!!! 
+    max_original_age = 69.120548
+    min_original_age = 20.517808
+
+    real_age = age_value * (max_original_age - min_original_age) + min_original_age
+    return int(real_age)
 
 #Design the Dashboard
 #After creating the app.layout below, we come back here to design each element of the layout
@@ -73,7 +80,6 @@ customer_information = dbc.Card(
         html.H6([html.Span("Age: "), html.Span(id="age_value")]),
         html.H6([html.Span("Marital Status: "), html.Span(id="marital_status_value")]),
         html.H6([html.Span("Gender: "), html.Span(id="gender_value")]),
-        html.H6([html.Span("Profession: "), html.Span(id="profession_value")]),
         html.H6([html.Span("Income: "), html.Span(id="income_value")])
         ]
         )
@@ -116,7 +122,7 @@ comparison_all_customers = dbc.Card(
 comparison_some_customers = dbc.Card(
     dbc.CardBody(
         [
-        html.H3("Comparison with Selected customers"),
+        html.H3("Comparison with Similar customers"),
         dcc.Graph(id="comparison_some")
         ]
         )
@@ -147,12 +153,32 @@ app.layout = dbc.Container(     #Same as html.Div but with additional customizat
                 dbc.Col(comparison_all_customers),
                 dbc.Col(comparison_some_customers)
                 ]
-            )
+            ),
+        html.Hr()
     ],
     fluid = True
     )
 
 #Add interactivity
+
+#show selected customer information
+@callback(
+    Output("age_value", "children"),
+    Output("marital_status_value", "children"),
+    Output("gender_value", "children"),
+    Output("income_value", "children"),
+    Output("loan_amount", "children"),
+    Input("customers_ids_dropdown", "value")
+    )
+def customer_info(customer_id):
+    age = df.loc[df.index == customer_id, "DAYS_BIRTH"].map(recalculate_age)
+    marital_status = df.loc[df.index == customer_id, "NAME_FAMILY_STATUS_Civil marriage"].map(
+        lambda status: "Married" if status == 1 else "Not Married")
+    gender = df.loc[df.index == customer_id, "CODE_GENDER_M"].map(
+        lambda gender : "Male" if gender == 1 else "Female")
+    income = df.loc[df.index == customer_id, "AMT_INCOME_TOTAL"]
+    loan_amount = df.loc[df.index == customer_id, "AMT_CREDIT"]
+    return age, marital_status, gender, income, loan_amount
 
 #Show prediction for the sellected customer
 @callback(
