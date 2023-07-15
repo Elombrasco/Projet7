@@ -171,7 +171,7 @@ def display_customer_score(customer_id):
     Input("features_dropdown", "value")
     )
 def graph_comparison_with_all_customers(selected_feature):
-    fig = px.histogram(df, x=selected_feature, color="TARGET", nbins =50, barmode="group")
+    fig = px.histogram(df, x=selected_feature, color="TARGET", nbins =20, barmode="group")
 
     fig.update_layout({"plot_bgcolor":"rgba(0,0,0,0)", 
         "paper_bgcolor":"rgba(0,0,0,0)"})
@@ -187,7 +187,7 @@ def graph_comparison_with_all_customers(selected_feature):
     )
 def graph_comparison_with_similar_customers(selected_features, reference_customer):
     similar_df = similar_customers_df(reference_customer)
-    fig = px.histogram(similar_df, x=selected_features, color="TARGET", nbins =50, barmode="group")
+    fig = px.histogram(similar_df, x=selected_features, color="TARGET", nbins =20, barmode="group")
 
     fig.update_layout({'plot_bgcolor':'rgba(0,0,0,0)', 'paper_bgcolor':'rgba(0,0,0,0)'})
     fig.update_xaxes(showline=True, linecolor='black')
