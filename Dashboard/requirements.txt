@@ -1,3 +1,6 @@
 dash
 pandas
-scickit-learn
+dash_bootstrap_components
+pickle
+lightgbm
+plotly.express
