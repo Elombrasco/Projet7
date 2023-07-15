@@ -26,10 +26,10 @@ features = [{'label': i, 'value': i} for i, j in zip(feature_importances["name"]
 
 customers_ids = [{'label': i, 'value': i} for i in sorted(df.index)]
 
-def similar_customers_df(reference_customer_id):
+def similar_customers_df(reference_customer_id): #To be revised
     selected_features = [feature["label"] for feature in features]
-    reference_customer_values = df.loc[df.index == reference_customer_id, selected_features]
-    mask = df[selected_features].apply(lambda row: any(row == reference_customer_values.values[0]), axis=1)
+    reference_customer_df = df.loc[df.index == reference_customer_id, selected_features]
+    mask = df[selected_features].apply(lambda row: any(row == reference_customer_df.values[0]), axis=1)
     similar_customers = df[mask]
     return similar_customers
 
