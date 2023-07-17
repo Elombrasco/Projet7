@@ -1,12 +1,12 @@
 import pickle
 from lightgbm import LGBMClassifier
 import pandas as pd
-from Pydantic import BaseModel
+from pydantic import BaseModel
 
+df = pd.read_csv('X_sample.csv', index_col="SK_ID_CURR")
+model = pickle.load(open("LGBMClassifier.pkl", "rb"))
 
 def predict(customer_id):
-    df = pd.read_csv('X_sample.csv', index_col="SK_ID_CURR")
-    model = pickle.load(open("LGBMClassifier.pkl", "rb"))
 
     customer_df = df[df.index == customer_id]
 

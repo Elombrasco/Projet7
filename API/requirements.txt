@@ -1,5 +1,5 @@
 FastAPI
-pystan
+pydantic
 lightgbm
 pandas
 uvicorn
