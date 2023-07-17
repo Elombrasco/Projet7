@@ -5,3 +5,4 @@ lightgbm
 plotly.express
 gunicorn
 scikit-learn
+requests

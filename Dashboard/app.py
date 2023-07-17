@@ -2,7 +2,7 @@ from dash import Dash, html, dcc, Input, Output, callback
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
-from prediction_app import predict_selected_customer_score
+import requests
 
 app = Dash(__name__, external_stylesheets = [dbc.themes.BOOTSTRAP])
 server = app.server
@@ -193,9 +193,23 @@ def customer_info(customer_id):
     )
 def display_customer_score(customer_id):
     if not customer_id:
-        return 0, 0    #Just in case the user removes the id from dropdown
-    prediction = predict_selected_customer_score(customer_id)
-    return prediction, f"{prediction}"
+        return 0, 0  # Just in case the user removes the id from dropdown
+
+    # Prepare the JSON payload
+    payload = {"customer": customer_id}
+
+    try:
+        # Make the API request
+        response = requests.post("http://121.0.0.1:8085/predict", json=payload)
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            prediction = response.json()["prediction"]
+            return prediction, f"{prediction}"
+        else:
+            return -1, "Error: Unable to fetch prediction"
+    except requests.exceptions.RequestException as e:
+        return -1, f"Error: {e}"
 
 #Score Interpretation
 @callback(
