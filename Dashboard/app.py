@@ -8,7 +8,7 @@ app = Dash(__name__, external_stylesheets = [dbc.themes.BOOTSTRAP])
 server = app.server
 
 #Load the data and model
-df = pd.read_csv("data/application_train.csv", index_col="SK_ID_CURR", nrows = 20000)
+df = pd.read_csv("data/application_train_sample.csv", index_col="SK_ID_CURR", nrows = 20000)
 #Remove nrows for the final data
 
 feature_importances = pd.read_csv("data/feature_importances.csv", names = ["name", "importance"])
