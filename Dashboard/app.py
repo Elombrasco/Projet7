@@ -26,7 +26,7 @@ dashboard_title = html.H1(
 #Customer selection
 customer_selection = dbc.Card(
     [
-    dbc.CardHeader("Customer Selection"),
+    dbc.CardHeader("Selection des clients"),
     dbc.CardBody(
     [
         dcc.Dropdown(
@@ -39,7 +39,7 @@ customer_selection = dbc.Card(
 #Customer Score
 customer_score = dbc.Card(
     [
-    dbc.CardHeader("Default Probability"),
+    dbc.CardHeader("Probabilié de faillite"),
     dbc.CardBody(
         [
             dbc.Progress(id="predicted_score", style = {"height" : "30px"})
@@ -63,13 +63,13 @@ def probability_class(default_probability):
 customer_information = dbc.Card(
     dbc.CardBody(
         [
-        html.H3("Customer Information"),
+        html.H3("Informations sur le client"),
         html.Hr(),
         html.H6([html.Span("Age: "), html.Span(id="age_value")]),
-        html.H6([html.Span("Marital Status: "), html.Span(id="marital_status_value")]),
-        html.H6([html.Span("Gender: "), html.Span(id="gender_value")]),
+        html.H6([html.Span("Status matrimonial: "), html.Span(id="marital_status_value")]),
+        html.H6([html.Span("Genre: "), html.Span(id="gender_value")]),
         html.H6([html.Span("Occupation: "), html.Span(id="occupation_value")]),
-        html.H6([html.Span("Income: "), html.Span(id="income_value")])
+        html.H6([html.Span("Revenus: "), html.Span(id="income_value")])
         ]
         )
     )
@@ -78,18 +78,18 @@ customer_information = dbc.Card(
 score_interpretation = dbc.Card(
     dbc.CardBody(
         [
-        html.H3("Score Description"),
+        html.H3("Décision"),
         html.Hr(),
-        html.H6([html.Span("Loan Amount: "), html.Span(id="loan_amount")]),
-        html.H6([html.Span("Probability of Default: "), html.Span(id="likelyhood")]),
-        html.H6([html.Span("Explanations: "), html.Span(id="explanations")])
+        html.H6([html.Span("Montant du pret: "), html.Span(id="loan_amount")]),
+        html.H6([html.Span("Probabilité de défaillance: "), html.Span(id="likelyhood")]),
+        html.H6([html.Span("Décision: "), html.Span(id="explanations")])
         ]
         )
     )
 
 features_selection = dbc.Card(
     [
-    dbc.CardHeader("Features Selection"),
+    dbc.CardHeader("Selection des features"),
     dbc.CardBody(
     [
         dcc.Dropdown(
@@ -102,7 +102,7 @@ features_selection = dbc.Card(
 comparison_all_customers = dbc.Card(
     dbc.CardBody(
         [
-        html.H3("Comparison with All Customers"),
+        html.H3("Comparaison avec l'ensemble des clients"),
         dcc.Graph(id="comparison_all")
         ]
         )
@@ -111,7 +111,7 @@ comparison_all_customers = dbc.Card(
 comparison_some_customers = dbc.Card(
     dbc.CardBody(
         [
-        html.H3("Comparison with Similar customers"),
+        html.H3("Comparison avec des clients similaires"),
         dcc.Graph(id="comparison_some")
         ]
         )
@@ -209,11 +209,12 @@ def describe_score(customer_score):
     )
 def score_explanation(customer_score):
     explain = {
-    "Low" : f"With a score of {customer_score}, much less than the 50 percent treshold, this customer is very likely to repay their loan.",
-    "Medium" : f"The customer scored {customer_score}, less than the 50 percent treshold, they are quiet likely to repay their loan.",
-    "High" : f"The customer has a score of {customer_score}, higher than the 50 percent treshold, they are not likely to repay their loan.",
-    "Very high" : f"This customer, with a score of {customer_score}, much more than the 50 percent treshold, will not repay their loan.",
-    "Unavailable" : "No data available at this time."
+
+    "Low" : f"Avec un score de {customer_score}, bien inférieur au seuil de 50 %, ce client est très susceptible de rembourser son prêt.",
+    "Medium" : f"Le client a obtenu un score de {customer_score}, inférieur au seuil de 50 %, il est assez susceptible de rembourser son prêt.",
+    "High" : f"Le client a un score de {customer_score}, supérieur au seuil de 50 %, il est peu susceptible de rembourser son prêt.",
+    "Very high" : f"Cet(te) client(e), avec un score de {customer_score}, bien supérieur au seuil de 50 %, ne remboursera pas son prêt.",
+    "Unavailable" : "Aucune donnée disponible pour le moment."
     }
     return explain[probability_class(customer_score)]
 
