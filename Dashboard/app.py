@@ -65,11 +65,11 @@ customer_score = dbc.Card(
 def probability_class(default_probability):
     if default_probability < 0:
         return "Unavailable"
-    elif default_probability < 0.3:
+    elif default_probability < 20:
         return "Low"
-    elif default_probability < 0.5:
+    elif default_probability < 50:
         return "Medium"
-    elif default_probability < 0.8:
+    elif default_probability < 80:
         return "High"
     else:
         return "Very high"
@@ -195,21 +195,21 @@ def display_customer_score(customer_id):
     if not customer_id:
         return 0, 0  # Just in case the user removes the id from dropdown
 
-    # Prepare the JSON payload
-    payload = {"customer": customer_id}
+    # Prepare the JSON message
+    message = {"customer_id": customer_id}
 
     try:
         # Make the API request
-        response = requests.post("http://121.0.0.1:8085/predict", json=payload)
+        response = requests.post("http://127.0.0.1:8000/predict", json=message)
 
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
-            prediction = response.json()["prediction"]
+            prediction = response.json()["score"]
             return prediction, f"{prediction}"
         else:
-            return -1, "Error: Unable to fetch prediction"
+            return -1, -1
     except requests.exceptions.RequestException as e:
-        return -1, f"Error: {e}"
+        return -2, -2
 
 #Score Interpretation
 @callback(
@@ -224,10 +224,10 @@ def describe_score(customer_score):
     )
 def score_explanation(customer_score):
     explain = {
-    "Low" : f"With a score of {customer_score}, this customer is very likely to repay their loan.",
-    "Medium" : f"The customer scored {customer_score}, hence they are quiet likely to repay their loan.",
-    "High" : f"The customer has a score of {customer_score}, hence they are not likely to repay their loan.",
-    "Very high" : f"This customer with a score of {customer_score} will not repay their loan.",
+    "Low" : f"With a score of {customer_score}, much less than the 50 percent treshold, this customer is very likely to repay their loan.",
+    "Medium" : f"The customer scored {customer_score}, less than the 50 percent treshold, they are quiet likely to repay their loan.",
+    "High" : f"The customer has a score of {customer_score}, higher than the 50 percent treshold, they are not likely to repay their loan.",
+    "Very high" : f"This customer, with a score of {customer_score}, much more than the 50 percent treshold, will not repay their loan.",
     "Unavailable" : "No data available at this time."
     }
     return explain[probability_class(customer_score)]
