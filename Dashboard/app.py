@@ -185,7 +185,7 @@ def display_customer_score(customer_id):
 
     try:
         # Make the API request
-        response = requests.post("http://127.0.0.1:8000/predict", json=message)
+        response = requests.post("https://api-pret-a-depenser-prediction.onrender.com/predict", json=message)
 
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
