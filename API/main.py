@@ -5,24 +5,17 @@ from model import predict
 
 app = FastAPI()
 
-class id_in(BaseModel):
-	customer : int
-
-class score_out(id_in):
-	prediction: dict
-
+class post_data(BaseModel):
+	customer_id : int
 
 @app.get('/')
 async def root():
-	return {"message" : "Welcome to Score Prediction API"}
+    return {"Message": "Welcome to Score Prediction API."}
 
-@app.post("/predict", response_model=score_out, status_code=200)
-def get_prediction(payload: id_in):
-	customer = payload.customer
-	predicted_score = predict(customer)
-	response_object = {"customer_id":customer, "score": predicted_score}
-
-	return response_object
+@app.post("/predict")
+def score(input_data:post_data):
+	score = predict(input_data.customer_id)
+	return {"score": score}
 
 if __name__ == "__main__":
 	uvicorn.run(app)
