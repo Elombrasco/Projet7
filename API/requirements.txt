@@ -3,4 +3,4 @@ pydantic
 lightgbm
 pandas
 uvicorn
-scikit-learn==1.2.2
+scikit-learn
