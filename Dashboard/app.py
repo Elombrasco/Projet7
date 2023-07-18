@@ -8,27 +8,12 @@ app = Dash(__name__, external_stylesheets = [dbc.themes.BOOTSTRAP])
 server = app.server
 
 #Load the data and model
-df = pd.read_csv("data/application_train_sample.csv", index_col="SK_ID_CURR", nrows = 20000)
-#Remove nrows for the final data
+df = pd.read_csv("data/application_train_sample.csv", index_col="SK_ID_CURR")
 
-feature_importances = pd.read_csv("data/feature_importances.csv", names = ["name", "importance"])
-
-#Select features that will be used for comparison
-"""treshold = 210 #Choose a value for minimum feature importance
-features = [{'label': i, 'value': i} for i, j in zip(feature_importances["name"], 
-    feature_importances["importance"]) if j > treshold]"""
-
-features = [{"label":i, "value":i} for i in df.columns]
+features_dicts = [{"label":i, "value":i} for i in df.columns if i != "TARGET"]
+features = [feature["label"] for feature in features_dicts if feature != "TARGET"]
 
 customers_ids = [{'label': i, 'value': i} for i in sorted(df.index)]
-
-def similar_customers_df(reference_customer_id): #To be revised
-    selected_features = [feature["label"] for feature in features]
-    reference_customer_df = df.loc[df.index == reference_customer_id, selected_features]
-    mask = df[selected_features].apply(lambda row: any(row == reference_customer_df.values[0]), axis=1)
-    similar_customers = df[mask]
-    return similar_customers
-
 
 #Design the Dashboard
 #After creating the app.layout below, we come back here to design each element of the layout
@@ -109,8 +94,8 @@ features_selection = dbc.Card(
     [
         dcc.Dropdown(
             id="features_dropdown",
-            options = features,
-            value = features[0]["value"]),   #Default value
+            options = features_dicts,
+            value = features_dicts[0]["value"]),   #Default value
     ])
     ])
 
@@ -236,8 +221,8 @@ def score_explanation(customer_score):
     Output("comparison_all", "figure"),
     Input("features_dropdown", "value")
     )
-def graph_comparison_with_all_customers(selected_features):
-    fig = px.histogram(df, x=selected_features, color="TARGET", nbins =20, barmode="group")
+def graph_comparison_with_all_customers(selected_feature):
+    fig = px.histogram(df, x=selected_feature, color="TARGET", nbins =20, barmode="group")
 
     fig.update_layout({
         "plot_bgcolor":"rgba(0,0,0,0)", 
@@ -252,9 +237,12 @@ def graph_comparison_with_all_customers(selected_features):
     Input("features_dropdown", "value"),
     Input("customers_ids_dropdown", "value")
     )
-def graph_comparison_with_similar_customers(selected_features, reference_customer):
-    similar_df = similar_customers_df(reference_customer)
-    fig = px.histogram(similar_df, x=selected_features, color="TARGET", nbins =20, barmode="group")
+def graph_comparison_with_similar_customers(selected_feature, reference_customer_id):
+    #For the selected feature, determine the value for the selected reference_customer
+    reference_value = df.loc[df.index==reference_customer_id, selected_feature].values[0]
+    #return all customers who share the same value for the selected feature with the reference customer
+    similar_df = df.loc[df[selected_feature]==reference_value]
+    fig = px.histogram(similar_df, x=selected_feature, color="TARGET", nbins =20, barmode="group")
 
     fig.update_layout({'plot_bgcolor':'rgba(0,0,0,0)', 'paper_bgcolor':'rgba(0,0,0,0)'})
     fig.update_xaxes(showline=True, linecolor='black')
